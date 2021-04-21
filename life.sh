@@ -15,6 +15,7 @@ function showUsageAndExit {
 Usage:	$0 --cols=C|-cC --rows=R|-rR [--help|-h]
     --cols|-c: Number of columns
     --rows|-r: Number of rows
+    --weight|-w: Probably of cell starting with life (0-100)
     --help|-h: Display this help information and exit
 
 EOF
@@ -27,7 +28,7 @@ function checkNumber {
 	numReg="^[1-9][0-9]*$"
 	if ! [[ ${varValue} =~ ${numReg} ]]
 	then
-		echo "Error: ${varValue} is not a valid number for ${varName}"
+		printf "Error: %s is not a valid number for %s" ${varValue} ${varName}
 		exit
 	fi
 }
@@ -38,7 +39,21 @@ function generateBoard {
 	let num=${numRows}*${numCols}
 	for (( i=0; i<${num}; i++ ))
 	do
-		board+=($(od -An -N1 -i /dev/random | awk '{print int($1/192)}'))
+		x=$(($RANDOM % 100))
+		if [[ ${x} -le ${weight} ]]
+		then
+			board+=(1)
+			if [[ ${debug} -eq 1 ]]
+			then
+				printf "Random number %s is less than or equal to %s\n" ${x} ${weight}
+			fi
+		else
+			board+=(0)
+			if [[ ${debug} -eq 1 ]]
+			then
+				printf "Random number %s is greater than %s\n" ${x} ${weight}
+			fi
+		fi
 	done
 }
 
@@ -173,6 +188,7 @@ function printBoard {
 		fi
 	done
 	printBoardBottomBorder ${numCols}
+	sleep 0.5
 }
 
 function iterateBoard {
@@ -285,7 +301,7 @@ function iterateBoard {
 	board=("${tempBoard[@]}")
 }
 
-options=$(getopt --longoptions "help,rows:,cols:,debug" --options hr:c:d -- "$@")
+options=$(getopt --longoptions "help,rows:,cols:,debug,weight:" --options hr:c:dw: -- "$@")
 
 eval set -- "$options"
 while true
@@ -304,6 +320,11 @@ do
 			export cols=$2
 			shift
 			shift;;
+		--weight|-w)
+			checkNumber $1 $2
+			export weight=$2
+			shift
+			shift;;
 		--debug|-d)
 			export debug=1
 			shift;;
@@ -320,15 +341,16 @@ then
 	showUsageAndExit
 fi
 
-echo "Starting life with ${rows} rows and ${cols} columns"
+printf "Starting life with %s rows and %s columns" ${rows} ${cols}
 generateBoard ${rows} ${cols}
-checkBoard=()
 count=0
+checkBoard=()
+printBoard ${rows} ${cols} ${count}
 while [[ "${board[@]}" != "${checkBoard[@]}" ]]
 do
 	checkBoard=("${board[@]}")
 	iterateBoard ${rows} ${cols}
 	printBoard ${rows} ${cols} ${count}
 	let count=${count}+1
-	sleep 0.5
 done
+printf "Equilibrium achieved after %s iterations\n" ${count}
