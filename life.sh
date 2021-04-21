@@ -15,7 +15,7 @@ function showUsageAndExit {
 Usage:	$0 --cols=C|-cC --rows=R|-rR [--help|-h]
     --cols|-c: Number of columns
     --rows|-r: Number of rows
-    --weight|-w: Probably of cell starting with life (0-100)
+    --weight|-w: Probably of cell starting with life (1-100)
     --help|-h: Display this help information and exit
 
 EOF
