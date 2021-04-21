@@ -9,6 +9,8 @@ board=()
 debug=0
 births=0
 deaths=0
+borderColor=$(tput setaf 244)
+cellColor=$(tput sgr0)
 
 function showUsageAndExit {
 	cat << EOF
@@ -28,7 +30,7 @@ function checkNumber {
 	numReg="^[1-9][0-9]*$"
 	if ! [[ ${varValue} =~ ${numReg} ]]
 	then
-		printf "Error: %s is not a valid number for %s" ${varValue} ${varName}
+		printf "Error: %s is not a valid number for %s" "${varValue}" "${varName}"
 		exit
 	fi
 }
@@ -36,22 +38,22 @@ function checkNumber {
 function generateBoard {
 	local numRows=$1
 	local numCols=$2
-	let num=${numRows}*${numCols}
-	for (( i=0; i<${num}; i++ ))
+	num=$((numRows * numCols))
+	for (( i=0; i<num; i++ ))
 	do
-		x=$(($RANDOM % 100))
+		x=$((RANDOM % 100))
 		if [[ ${x} -le ${weight} ]]
 		then
 			board+=(1)
 			if [[ ${debug} -eq 1 ]]
 			then
-				printf "Random number %s is less than or equal to %s\n" ${x} ${weight}
+				printf "Random number %s is less than or equal to %s\n" "${x}" "${weight}"
 			fi
 		else
 			board+=(0)
 			if [[ ${debug} -eq 1 ]]
 			then
-				printf "Random number %s is greater than %s\n" ${x} ${weight}
+				printf "Random number %s is greater than %s\n" "${x}" "${weight}"
 			fi
 		fi
 	done
@@ -59,29 +61,29 @@ function generateBoard {
 
 function printBoardTopBorder {
 	local numCols=$1
-	let stopper=${numCols}-1
-	for (( x=0; x<${numCols}; x++ ))
+	stopper=$((numCols - 1))
+	for (( x=0; x<numCols; x++ ))
 	do
-		if [ ${x} -eq 0 ]
+		if [ "${x}" -eq 0 ]
 		then
-			printf "\x1b(0\x6c\x1b(B"
+			printf "${borderColor}\x1b(0\x6c\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
-		elif [ ${x} -eq ${stopper} ]
+		elif [ "${x}" -eq ${stopper} ]
 		then
-			printf "\x1b(0\x77\x1b(B"
+			printf "${borderColor}\x1b(0\x77\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
-			printf "\x1b(0\x6b\x1b(B"
+			printf "${borderColor}\x1b(0\x6b\x1b(B${cellColor}"
 		else
-			printf "\x1b(0\x77\x1b(B"
+			printf "${borderColor}\x1b(0\x77\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
 		fi
 	done
@@ -90,29 +92,29 @@ function printBoardTopBorder {
 
 function printBoardBottomBorder {
 	local numCols=$1
-	let stopper=${numCols}-1
-	for (( x=0; x<${numCols}; x++ ))
+	stopper=$((numCols - 1))
+	for (( x=0; x<numCols; x++ ))
 	do
-		if [ ${x} -eq 0 ]
+		if [ "${x}" -eq 0 ]
 		then
-			printf "\x1b(0\x6d\x1b(B"
+			printf "${borderColor}\x1b(0\x6d\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
-		elif [ ${x} -eq ${stopper} ]
+		elif [ "${x}" -eq ${stopper} ]
 		then
-			printf "\x1b(0\x76\x1b(B"
+			printf "${borderColor}\x1b(0\x76\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
-			printf "\x1b(0\x6a\x1b(B"
+			printf "${borderColor}\x1b(0\x6a\x1b(B${cellColor}"
 		else
-			printf "\x1b(0\x76\x1b(B"
+			printf "${borderColor}\x1b(0\x76\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
 		fi
 	done
@@ -121,29 +123,29 @@ function printBoardBottomBorder {
 
 function printBoardMiddleBorder {
 	local numCols=$1
-	let stopper=${numCols}-1
-	for (( x=0; x<${numCols}; x++ ))
+	stopper=$((numCols - 1))
+	for (( x=0; x<numCols; x++ ))
 	do
-		if [ ${x} -eq 0 ]
+		if [ "${x}" -eq 0 ]
 		then
-			printf "\x1b(0\x74\x1b(B"
+			printf "${borderColor}\x1b(0\x74\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
-		elif [ ${x} -eq ${stopper} ]
+		elif [ "${x}" -eq ${stopper} ]
 		then
-			printf "\x1b(0\x6e\x1b(B"
+			printf "${borderColor}\x1b(0\x6e\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
-			printf "\x1b(0\x75\x1b(B"
+			printf "${borderColor}\x1b(0\x75\x1b(B${cellColor}"
 		else
-			printf "\x1b(0\x6e\x1b(B"
+			printf "${borderColor}\x1b(0\x6e\x1b(B${cellColor}"
 			for y in {1..3}
 			do
-				printf "\x1b(0\x71\x1b(B"
+				printf "${borderColor}\x1b(0\x71\x1b(B${cellColor}"
 			done
 		fi
 	done
@@ -154,40 +156,39 @@ function printBoard {
 	local numRows=$1
 	local numCols=$2
 	local iterationCount=$3
-	let num=${numRows}*${numCols}
-	let colStopper=${numCols}-1
-	let rowStopper=${numRows}-1
+	num=$((numRows * numCols))
+	rowStopper=$((numRows-1))
 	if [[ ${debug} -eq 0 ]]
 	then
 		clear
 	fi
-	printf "Iteration number %s: %s deaths, %s births\n" ${iterationCount} ${deaths} ${births}
-	printBoardTopBorder ${numCols}
-	for (( i=0; i<${numRows}; i++ ))
+	printf "Iteration number %s: %s deaths, %s births\n" "${iterationCount}" "${deaths}" "${births}"
+	printBoardTopBorder "${numCols}"
+	for (( i=0; i<numRows; i++ ))
 	do
-		for (( j=0; j<${numCols}; j++ ))
+		for (( j=0; j<numCols; j++ ))
 		do
-			let n=$((${i}*${numCols}))+${j}
+			n=$(( ( i * numCols ) + j ))
 			local currVal=${board[${n}]}
 			if [[ ${j} -eq 0 ]]
 			then
-				printf "\x1b(0\x78\x1b(B"
+				printf "${borderColor}\x1b(0\x78\x1b(B${cellColor}"
 			fi
 			if [[ ${currVal} -eq 1 ]]
 			then
-				printf " \x1b(0\x60\x1b(B "
+				printf " ${cellColor}\x1b(0\x60\x1b(B "
 			else
 				printf "   "
 			fi
-			printf "\x1b(0\x78\x1b(B"
+			printf "${borderColor}\x1b(0\x78\x1b(B${cellColor}"
 		done
 		printf "\n"
-		if [ ${i} -ne ${rowStopper} ]
+		if [ "${i}" -ne ${rowStopper} ]
 		then
-			printBoardMiddleBorder ${numCols}
+			printBoardMiddleBorder "${numCols}"
 		fi
 	done
-	printBoardBottomBorder ${numCols}
+	printBoardBottomBorder "${numCols}"
 	sleep 0.5
 }
 
@@ -195,58 +196,57 @@ function iterateBoard {
 	local numRows=$1
 	local numCols=$2
 	local tempBoard=()
-	let totalNum=${numRows}*${numCols}
 	births=0
 	deaths=0
 
-	for x in ${!board[@]}
+	for x in "${!board[@]}"
 	do
-		let rowNum=$(( ${x}/${numCols} ))
-		let colNum=$(( ${x}%${numCols} ))
+		rowNum=$((x/numCols))
+		colNum=$((x%numCols))
 		neighbourCount=0
 		if [[ ${rowNum} -gt 0 ]]
 		then
 			if [[ ${colNum} -gt 0 ]]
 			then
-				let topLeft=${x}-${numCols}-1
-				let neighbourCount=${neighbourCount}+${board[${topLeft}]}
+				topLeft=$((x-numCols-1))
+				neighbourCount=$((neighbourCount+board[topLeft]))
 			fi
-			let top=${x}-${numCols}
-			let neighbourCount=${neighbourCount}+${board[${top}]}
-			if [[ ${colNum} -lt $((${numCols}-1)) ]]
+			top=$((x-numCols))
+			neighbourCount=$((neighbourCount+board[top]))
+			if [[ ${colNum} -lt $((numCols-1)) ]]
 			then
-				let topRight=${x}-${numCols}+1
-				let neighbourCount=${neighbourCount}+${board[${topRight}]}
+				topRight=$((x-numCols+1))
+				neighbourCount=$((neighbourCount+board[topRight]))
 			fi
 		fi
 		if [[ ${colNum} -gt 0 ]]
 		then
-			let left=${x}-1
-			let neighbourCount=${neighbourCount}+${board[${left}]}
+			left=$((x-1))
+			neighbourCount=$((neighbourCount+board[left]))
 		fi
-		if [[ ${colNum} -lt $((${numCols}-1)) ]]
+		if [[ ${colNum} -lt $((numCols-1)) ]]
 		then
-			let right=${x}+1
-			let neighbourCount=${neighbourCount}+${board[${right}]}
+			right=$((x+1))
+			neighbourCount=$((neighbourCount+board[right]))
 		fi
-		if [[ ${rowNum} -lt $((${numRows}-1)) ]]
+		if [[ ${rowNum} -lt $((numRows-1)) ]]
 		then
 			if [[ ${colNum} -gt 0 ]]
 			then
-				let bottomLeft=${x}+${numCols}-1
-				let neighbourCount=${neighbourCount}+${board[${bottomLeft}]}
+				bottomLeft=$((x+numCols-1))
+				neighbourCount=$((neighbourCount+board[bottomLeft]))
 			fi
-			let bottom=${x}+${numCols}
-			let neighbourCount=${neighbourCount}+${board[${bottom}]}
-			if [[ ${colNum} -lt $((${numCols}-1)) ]]
+			bottom=$((x+numCols))
+			neighbourCount=$((neighbourCount+board[bottom]))
+			if [[ ${colNum} -lt $((numCols-1)) ]]
 			then
-				let bottomRight=${x}+${numCols}+1
-				let neighbourCount=${neighbourCount}+${board[${bottomRight}]}
+				bottomRight=$((x+numCols+1))
+				neighbourCount=$((neighbourCount+board[bottomRight]))
 			fi
 		fi
 		if [[ ${debug} -eq 1 ]]
 		then
-			printf "Index: %s, Row: %s, Column: %s, Count: %s\n" ${x} ${rowNum} ${colNum} ${neighbourCount}
+			printf "Index: %s, Row: %s, Column: %s, Count: %s\n" "${x}" "${rowNum}" "${colNum}" "${neighbourCount}"
 		fi
 
 		# Any live cell with fewer than two live neighbours dies, as if by underpopulation.
@@ -260,40 +260,40 @@ function iterateBoard {
 			if [[ ${neighbourCount} -lt 2 ]]
 			then
 				tempBoard+=(0)
-				let deaths=${deaths}+1
+				deaths=$((deaths+1))
 				if [[ ${debug} -eq 1 ]]
 				then
-					printf "Index %s is live but dies\n" ${x}
+					printf "Index %s is live but dies\n" "${x}"
 				fi
 			elif [[ ${neighbourCount} -gt 3 ]]
 			then
 				tempBoard+=(0)
-				let deaths=${deaths}+1
+				deaths=$((deaths+1))
 				if [[ ${debug} -eq 1 ]]
 				then
-					printf "Index %s is live but dies\n" ${x}
+					printf "Index %s is live but dies\n" "${x}"
 				fi
 			else
-				tempBoard+=(${currVal})
+				tempBoard+=("${currVal}")
 				if [[ ${debug} -eq 1 ]]
 				then
-					printf "Index %s is live and stays the same\n" ${x}
+					printf "Index %s is live and stays the same\n" "${x}"
 				fi
 			fi
 		else
 			if [[ ${neighbourCount} -eq 3 ]]
 			then
 				tempBoard+=(1)
-				let births=${births}+1
+				births=$((births+1))
 				if [[ ${debug} -eq 1 ]]
 				then
-					printf "Index %s is dead but lives\n" ${x}
+					printf "Index %s is dead but lives\n" "${x}"
 				fi
 			else
-				tempBoard+=(${currVal})
+				tempBoard+=("${currVal}")
 				if [[ ${debug} -eq 1 ]]
 				then
-					printf "Index %s is dead and stays the same\n" ${x}
+					printf "Index %s is dead and stays the same\n" "${x}"
 				fi
 			fi
 		fi
@@ -311,17 +311,17 @@ do
 			showUsageAndExit
 			break;;
 		--rows|-r)
-			checkNumber $1 $2
+			checkNumber "$1" "$2"
 			export rows=$2
 			shift
 			shift;;
 		--cols|-c)
-			checkNumber $1 $2
+			checkNumber "$1" "$2"
 			export cols=$2
 			shift
 			shift;;
 		--weight|-w)
-			checkNumber $1 $2
+			checkNumber "$1" "$2"
 			export weight=$2
 			shift
 			shift;;
@@ -341,16 +341,27 @@ then
 	showUsageAndExit
 fi
 
-printf "Starting life with %s rows and %s columns" ${rows} ${cols}
-generateBoard ${rows} ${cols}
+printf "Starting life with %s rows and %s columns" "${rows}" "${cols}"
+generateBoard "${rows}" "${cols}"
+equilibrium=0
 count=0
 checkBoard=()
-printBoard ${rows} ${cols} ${count}
-while [[ "${board[@]}" != "${checkBoard[@]}" ]]
+printBoard "${rows}" "${cols}" "${count}"
+while [[ ${equilibrium} -eq 0 ]]
 do
 	checkBoard=("${board[@]}")
-	iterateBoard ${rows} ${cols}
-	printBoard ${rows} ${cols} ${count}
-	let count=${count}+1
+	iterateBoard "${rows}" "${cols}"
+	printBoard "${rows}" "${cols}" "${count}"
+	count=$((count+1))
+	equilibrium=1
+	boardLength="${#board[@]}"
+	for (( x=0; x<boardLength; x++))
+	do
+		if (( board[x] != checkBoard[x] ))
+		then
+			equilibrium=0
+			break
+		fi
+	done
 done
-printf "Equilibrium achieved after %s iterations\n" ${count}
+printf "Equilibrium achieved after %s iterations\n" "${count}"
