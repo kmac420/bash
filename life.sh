@@ -7,6 +7,8 @@
 
 board=()
 debug=0
+births=0
+deaths=0
 
 function showUsageAndExit {
 	cat << EOF
@@ -144,14 +146,14 @@ function printBoard {
 	then
 		clear
 	fi
-	printf "Iteration number %s\n" ${iterationCount}
+	printf "Iteration number %s: %s deaths, %s births\n" ${iterationCount} ${deaths} ${births}
 	printBoardTopBorder ${numCols}
 	for (( i=0; i<${numRows}; i++ ))
 	do
 		for (( j=0; j<${numCols}; j++ ))
 		do
 			let n=$((${i}*${numCols}))+${j}
-			local currVal=$(echo "${board[${n}]}" | awk '{print $1}')
+			local currVal=${board[${n}]}
 			if [[ ${j} -eq 0 ]]
 			then
 				printf "\x1b(0\x78\x1b(B"
@@ -178,6 +180,8 @@ function iterateBoard {
 	local numCols=$2
 	local tempBoard=()
 	let totalNum=${numRows}*${numCols}
+	births=0
+	deaths=0
 
 	for x in ${!board[@]}
 	do
@@ -234,12 +238,14 @@ function iterateBoard {
 		# Any live cell with more than three live neighbours dies, as if by overpopulation.
 		# Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
-		currVal=$(echo ${board[${x}]} | awk '{print $1}')
+		#currVal=$(echo ${board[${x}]} | awk '{print $1}')
+		currVal=${board[${x}]}
 		if [[ ${currVal} -eq 1 ]]
 		then
 			if [[ ${neighbourCount} -lt 2 ]]
 			then
 				tempBoard+=(0)
+				let deaths=${deaths}+1
 				if [[ ${debug} -eq 1 ]]
 				then
 					printf "Index %s is live but dies\n" ${x}
@@ -247,6 +253,7 @@ function iterateBoard {
 			elif [[ ${neighbourCount} -gt 3 ]]
 			then
 				tempBoard+=(0)
+				let deaths=${deaths}+1
 				if [[ ${debug} -eq 1 ]]
 				then
 					printf "Index %s is live but dies\n" ${x}
@@ -262,6 +269,7 @@ function iterateBoard {
 			if [[ ${neighbourCount} -eq 3 ]]
 			then
 				tempBoard+=(1)
+				let births=${births}+1
 				if [[ ${debug} -eq 1 ]]
 				then
 					printf "Index %s is dead but lives\n" ${x}
