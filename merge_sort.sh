@@ -65,4 +65,3 @@ else
 	read -r -a list
 fi
 merge_sort "${list[@]}"
-echo "${count}"
